@@ -12,7 +12,7 @@ import linear_irl as linear_irl
 import gridworld as gridworld
 
 
-def main(grid_size, discount):
+def main(grid_size, discount, penalty):
     """
     Run linear programming inverse reinforcement learning on the gridworld MDP.
 
@@ -30,7 +30,7 @@ def main(grid_size, discount):
     ground_r = np.array([gw.reward(s) for s in range(gw.n_states)])
     policy = [gw.optimal_policy_deterministic(s) for s in range(gw.n_states)]
     r = linear_irl.irl(gw.n_states, gw.n_actions, gw.transition_probability,
-                       policy, gw.discount, 1, 1.05)
+                       policy, gw.discount, 1, penalty)
 
     plt.subplot(1, 2, 1)
     plt.pcolor(ground_r.reshape((grid_size, grid_size)))
@@ -44,4 +44,4 @@ def main(grid_size, discount):
 
 
 if __name__ == '__main__':
-    main(5, 0.2)
+    main(grid_size=5, discount=0.5, penalty=1.05)
