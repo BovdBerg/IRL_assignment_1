@@ -4,9 +4,11 @@ Implements the gridworld MDP.
 Matthew Alger, 2015
 matthew.alger@anu.edu.au
 """
+import random
 
 import numpy as np
 import numpy.random as rn
+
 
 class Gridworld(object):
     """
@@ -23,7 +25,7 @@ class Gridworld(object):
 
         self.actions = ((1, 0), (0, 1), (-1, 0), (0, -1))
         self.n_actions = len(self.actions)
-        self.n_states = grid_size**2
+        self.n_states = grid_size ** 2
         self.grid_size = grid_size
         self.wind = wind
         self.discount = discount
@@ -101,7 +103,7 @@ class Gridworld(object):
         -> State int.
         """
 
-        return p[0] + p[1]*self.grid_size
+        return p[0] + p[1] * self.grid_size
 
     def neighbouring(self, i, k):
         """
@@ -135,16 +137,16 @@ class Gridworld(object):
 
         # Is k the intended state to move to?
         if (xi + xj, yi + yj) == (xk, yk):
-            return 1 - self.wind + self.wind/self.n_actions
+            return 1 - self.wind + self.wind / self.n_actions
 
         # If these are not the same point, then we can move there by wind.
         if (xi, yi) != (xk, yk):
-            return self.wind/self.n_actions
+            return self.wind / self.n_actions
 
         # If these are the same point, we can only move here by either moving
         # off the grid or being blown off the grid. Are we on a corner or not?
-        if (xi, yi) in {(0, 0), (self.grid_size-1, self.grid_size-1),
-                        (0, self.grid_size-1), (self.grid_size-1, 0)}:
+        if (xi, yi) in {(0, 0), (self.grid_size - 1, self.grid_size - 1),
+                        (0, self.grid_size - 1), (self.grid_size - 1, 0)}:
             # Corner.
             # Can move off the edge in two directions.
             # Did we intend to move off the grid?
@@ -153,14 +155,14 @@ class Gridworld(object):
                 # We intended to move off the grid, so we have the regular
                 # success chance of staying here plus an extra chance of blowing
                 # onto the *other* off-grid square.
-                return 1 - self.wind + 2*self.wind/self.n_actions
+                return 1 - self.wind + 2 * self.wind / self.n_actions
             else:
                 # We can blow off the grid in either direction only by wind.
-                return 2*self.wind/self.n_actions
+                return 2 * self.wind / self.n_actions
         else:
             # Not a corner. Is it an edge?
-            if (xi not in {0, self.grid_size-1} and
-                yi not in {0, self.grid_size-1}):
+            if (xi not in {0, self.grid_size - 1} and
+                    yi not in {0, self.grid_size - 1}):
                 # Not an edge.
                 return 0.0
 
@@ -171,10 +173,10 @@ class Gridworld(object):
                     0 <= yi + yj < self.grid_size):
                 # We intended to move off the grid, so we have the regular
                 # success chance of staying here.
-                return 1 - self.wind + self.wind/self.n_actions
+                return 1 - self.wind + self.wind / self.n_actions
             else:
                 # We can blow off the grid only by wind.
-                return self.wind/self.n_actions
+                return self.wind / self.n_actions
 
     def reward(self, state_int):
         """
@@ -200,7 +202,7 @@ class Gridworld(object):
         """
 
         trajectories = self.generate_trajectories(n_trajectories,
-                                             trajectory_length, policy)
+                                                  trajectory_length, policy)
         rewards = [[r for _, _, r in trajectory] for trajectory in trajectories]
         rewards = np.array(rewards)
 
@@ -222,9 +224,9 @@ class Gridworld(object):
 
         if sx < self.grid_size and sy < self.grid_size:
             return rn.randint(0, 2)
-        if sx < self.grid_size-1:
+        if sx < self.grid_size - 1:
             return 0
-        if sy < self.grid_size-1:
+        if sy < self.grid_size - 1:
             return 1
         raise ValueError("Unexpected state.")
 
@@ -242,7 +244,7 @@ class Gridworld(object):
         return 1
 
     def generate_trajectories(self, n_trajectories, trajectory_length, policy,
-                                    random_start=False):
+                              random_start=False):
         """
         Generate n_trajectories trajectories with length trajectory_length,
         following the given policy.
